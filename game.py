@@ -2,9 +2,13 @@ import repository
 
 class Game():
      
-     def create_game_server(): #for admins only
+     def get_panel_data():
+          
+          return repository.get_all_games()
      
-          return 0
+     def create_game(): #for admins only
+          
+          return repository.create_game()
      
      def play_game(): #for normal users
           #this is the init function for the games 

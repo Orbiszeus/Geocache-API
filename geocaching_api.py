@@ -29,7 +29,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URIS")
 CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
-VUE_REDIRECT_URL = "http://localhost:5173/map"
+VUE_REDIRECT_URL = "http://localhost:5173/game_panel"
 oauth.register(
     name='google',
     server_metadata_url=CONF_URL,
@@ -76,6 +76,17 @@ async def auth_google(code: str):
     redirect_url = f"{VUE_REDIRECT_URL}?authenticated=true&user_info={user_info}"
 
     return RedirectResponse(url=redirect_url)
+
+@app.post("/game_panel")
+async def join_game():
+    
+    return game.get_panel_data()
+
+@app.post("/create_game")
+async def join_game():
+    
+    return game.create_game()
+    
 
 @app.post("/join_game")
 async def join_game():
