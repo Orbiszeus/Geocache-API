@@ -17,13 +17,18 @@ from starlette.config import Config
 from starlette.responses import HTMLResponse, RedirectResponse
 from dotenv import load_dotenv
 import requests
+import models
+from pymongo.server_api import ServerApi
+from pymongo import MongoClient
+from repository import Repository
 
 app = FastAPI()
-
 config = Config('.env')
 oauth = OAuth(config)
 
 load_dotenv()  
+
+repository_instance = Repository()
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -73,6 +78,18 @@ async def auth_google(code: str):
     access_token = response.json().get("access_token")
     user_info_response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     user_info = user_info_response.json()
+    user_info_dict = user_info_response.content
+    email = user_info.get("email")
+    
+    user_model = User(
+    UserID=user_info.get("id"),
+    Name=user_info.get("name"),
+    Email=user_info.get("email"),
+    OAuthToken=access_token,
+    UserType="your_user_type_here"
+)      
+    if not repository_instance.check_user(email):
+       repository_instance.add_user(user_model)
     redirect_url = f"{VUE_REDIRECT_URL}?authenticated=true&user_info={user_info}"
 
     return RedirectResponse(url=redirect_url)

@@ -1,45 +1,61 @@
 from typing import List, Optional
-from pydantic import BaseModel
-
-class BaseClass(BaseModel):
-    class Config:
-        orm_mode = True
-
-class User(BaseClass):
-    UserID: int
+from pydantic import BaseModel, Field
+from typing import Optional
+from bson import ObjectId
+from pydantic.networks import AnyUrl
+        
+class User(BaseModel):
+    
+    UserID: str
     Name: str
     Email: str
     OAuthToken: str
     UserType: str
-
-class Game(BaseClass):
-    GameID: int
+    
+class GameArea(BaseModel):
+    coordinates: List[List[float]]
+    
+class Location(BaseModel):
+    type: str
+    coordinates: List[float]
+    
+class Game(BaseModel):
+    
+    CacheID : str
+    GameID: str
     OrganizerID: int
-    GameArea: str  
+    GameArea:  GameArea
     Status: str
     WinnerID: Optional[int]
+    
+    class Config:
+        allow_population_by_field_name = True
+        json_encoders = {
+            ObjectId: str
+        }
+        arbitrary_types_allowed = True
 
-class Cache(BaseClass):
+class Cache(BaseModel):
     CacheID: int
     GameID: int
-    Location: str  
+    Location: Location  
     Hint: str
     FoundByUserID: Optional[int]
 
-class Participation(BaseClass):
-    ParticipationID: int
-    UserID: int
+class Participation(BaseModel):
+    ParticipationID: str
+    UserID: str
     GameID: int
     JoinedDate: str  
 
-class CacheDiscovery(BaseClass):
+class CacheDiscovery(BaseModel):
     DiscoveryID: int
     CacheID: int
     UserID: int
     DiscoveryDate: str 
     ProofImage: str
 
-class ImageStorage(BaseClass):
+class ImageStorage(BaseModel):
     ImageID: int
     RelatedID: int
     ImagePath: str
