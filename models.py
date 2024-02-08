@@ -20,13 +20,12 @@ class Location(BaseModel):
     coordinates: List[float]
     
 class Game(BaseModel):
-    
     CacheID : str
     GameID: str
-    OrganizerID: int
+    OrganizerID: str
     GameArea:  GameArea
     Status: str
-    WinnerID: Optional[int]
+    WinnerID: Optional[int] = None 
     
     class Config:
         allow_population_by_field_name = True

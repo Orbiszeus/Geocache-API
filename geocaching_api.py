@@ -6,7 +6,7 @@ import repository
 from models import Game, User
 import game
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
+from typing import List
 from starlette.requests import Request
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth, OAuthError
@@ -79,6 +79,7 @@ async def auth_google(code: str):
     user_info_response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     user_info = user_info_response.json()
     user_info_dict = user_info_response.content
+    
     email = user_info.get("email")
     
     user_model = User(
@@ -94,10 +95,16 @@ async def auth_google(code: str):
 
     return RedirectResponse(url=redirect_url)
 
-@app.post("/game_panel")
-async def join_game():
-    
-    return game.get_panel_data()
+@app.get("/game_panel", response_model=List[models.Game])
+async def panel_data():
+    try:
+        games_list = repository_instance.get_panel_data()
+        return games_list
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
 
 @app.post("/create_game")
 async def join_game():

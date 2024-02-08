@@ -45,6 +45,19 @@ class Repository:
           except Exception as e:
                print(e)
                return False
+          
+     def get_panel_data(self) -> List[models.Game]:
+        try:
+            # Retrieve all documents from the 'Game' collection
+            games_cursor = self.game_collection.find({})
+            
+            # Convert cursor to a list of Game models
+            games_list = [models.Game(**game) for game in games_cursor]
+            
+            return games_list
+        except Exception as e:
+            print(e)
+            return []
                
           
 

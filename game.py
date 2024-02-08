@@ -2,9 +2,6 @@ import repository
 
 class Game():
      
-     def get_panel_data():
-          
-          return repository.get_all_games()
      
      def create_game(): #for admins only
           
